@@ -1,19 +1,29 @@
-import React, { useState } from "react"; // <-- 1. Importer useState
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {
+    loginUser,
+    selectIsLoggedIn,
+    selectAuthError,
+    selectAuthStatus,
+} from "../features/auth/authSlice";
 
 function SignInForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
 
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const isLoggedIn = useSelector(selectIsLoggedIn);
+    const authError = useSelector(selectAuthError);
+    const authStatus = useSelector(selectAuthStatus);
+
     // gestion du formulaire
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        console.log("Tentative de connexion avec :");
-        console.log("Email:", email);
-        console.log("Password:", password);
-        console.log("Remember Me:", rememberMe);
-
+        dispatch(loginUser({ email, password }));
         // appel à l'API et Redux ---
 
         // try {
@@ -30,6 +40,12 @@ function SignInForm() {
         // dispatch(loginFailure(error)); // Action Redux
         // }
     };
+    useEffect(() => {
+        if (isLoggedIn) {
+            console.log("Login réussi, navigation vers /profile...");
+            navigate("/profile");
+        }
+    }, [isLoggedIn, navigate]);
 
     return (
         <section className="sign-in-content">
@@ -65,6 +81,9 @@ function SignInForm() {
                     />
                     <label htmlFor="remember-me">Remember me</label>
                 </div>
+                {authStatus === "failed" && authError && (
+                    <div className="error-message">{authError}</div>
+                )}
                 <button type="submit" className="sign-in-button">
                     Sign In
                 </button>

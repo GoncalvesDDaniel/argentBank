@@ -34,6 +34,11 @@ export const loginUser = createAsyncThunk(
             }
 
             console.log("Connexion API réussie, données reçues:", data);
+            console.log(
+                "Valeur retournée par le thunk (data.body):",
+                data.body
+            );
+            return data.body;
         } catch (error) {
             console.error(
                 "Erreur réseau ou autre durant le login:",
@@ -66,6 +71,10 @@ const authSlice = createSlice({
                 state.error = null;
             })
             .addCase(loginUser.fulfilled, (state, action) => {
+                console.log(
+                    "Reducer fulfilled - action.payload reçu:",
+                    action.payload
+                );
                 state.status = "succeeded";
                 state.token = action.payload.token;
                 state.isLoggedIn = true;
