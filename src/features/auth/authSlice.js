@@ -13,7 +13,6 @@ const API_URL = "http://localhost:3001/api/v1";
 export const loginUser = createAsyncThunk(
     "auth/login",
     async ({ email, password }, thunkAPI) => {
-        // console.log(`Tentative de connexion pour ${email}`);
         try {
             const response = await fetch(`${API_URL}/user/login`, {
                 method: "POST",
@@ -29,15 +28,11 @@ export const loginUser = createAsyncThunk(
                 // On utilise le message d'erreur de l'API si disponible, sinon un message par défaut
                 const errorMessage =
                     data.message || `Erreur ${response.status}`;
-                console.error("Échec de la connexion API:", errorMessage);
+                // console.error("Échec de la connexion API:", errorMessage);
                 return thunkAPI.rejectWithValue(errorMessage);
             }
 
-            console.log("Connexion API réussie, données reçues:", data);
-            console.log(
-                "Valeur retournée par le thunk (data.body):",
-                data.body
-            );
+            // console.log("Connexion API réussie, données reçues:", data);
             return data.body;
         } catch (error) {
             console.error(
@@ -71,10 +66,10 @@ const authSlice = createSlice({
                 state.error = null;
             })
             .addCase(loginUser.fulfilled, (state, action) => {
-                console.log(
-                    "Reducer fulfilled - action.payload reçu:",
-                    action.payload
-                );
+                // console.log(
+                //     "Reducer fulfilled - action.payload reçu:",
+                //     action.payload
+                // );
                 state.status = "succeeded";
                 state.token = action.payload.token;
                 state.isLoggedIn = true;

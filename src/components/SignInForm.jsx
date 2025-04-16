@@ -24,22 +24,8 @@ function SignInForm() {
         e.preventDefault();
 
         dispatch(loginUser({ email, password }));
-        // appel à l'API et Redux ---
-
-        // try {
-        //   const userData = await loginUser(email, password);
-        //   dispatch(loginSuccess(userData)); // Action Redux
-
-        //   if (rememberMe) {
-        // Gérer la persistance (ex: localStorage)
-        //   }
-        // Naviguer vers la page profil
-
-        // } catch (error) {
-        // Afficher un message d'erreur
-        // dispatch(loginFailure(error)); // Action Redux
-        // }
     };
+
     useEffect(() => {
         if (isLoggedIn) {
             console.log("Login réussi, navigation vers /profile...");
