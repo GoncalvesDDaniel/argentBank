@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { apiLogin } from "../../services/authService";
 
 const initialState = {
     token: null,
@@ -8,39 +9,16 @@ const initialState = {
     error: null,
 };
 
-const API_URL = "http://localhost:3001/api/v1";
-
 export const loginUser = createAsyncThunk(
     "auth/login",
     async ({ email, password }, thunkAPI) => {
         try {
-            const response = await fetch(`${API_URL}/user/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                // On utilise le message d'erreur de l'API si disponible, sinon un message par défaut
-                const errorMessage =
-                    data.message || `Erreur ${response.status}`;
-                // console.error("Échec de la connexion API:", errorMessage);
-                return thunkAPI.rejectWithValue(errorMessage);
-            }
-
-            // console.log("Connexion API réussie, données reçues:", data);
-            return data.body;
+            const data = await apiLogin({ email, password });
+            return data;
         } catch (error) {
-            console.error(
-                "Erreur réseau ou autre durant le login:",
-                error.message
-            );
+            console.error("Erreur de connexion:", error.message);
             return thunkAPI.rejectWithValue(
-                error.message || "Impossible de joindre le serveur"
+                error.message || "Erreur de connexion"
             );
         }
     }
@@ -62,21 +40,27 @@ const authSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(loginUser.pending, (state) => {
+                console.log("authSlice: loginUser.pending");
                 state.status = "loading";
                 state.error = null;
             })
             .addCase(loginUser.fulfilled, (state, action) => {
-                // console.log(
-                //     "Reducer fulfilled - action.payload reçu:",
-                //     action.payload
-                // );
+                console.log(
+                    "authSlice: loginUser.fulfilled, payload:",
+                    action.payload
+                );
                 state.status = "succeeded";
                 state.token = action.payload.token;
                 state.isLoggedIn = true;
                 state.error = null;
                 // La récupération du profil utilisateur viendra APRÈS ça
             })
+
             .addCase(loginUser.rejected, (state, action) => {
+                console.log(
+                    "authSlice: loginUser.rejected, error:",
+                    action.payload
+                );
                 state.status = "failed";
                 state.error = action.payload;
                 state.isLoggedIn = false;
