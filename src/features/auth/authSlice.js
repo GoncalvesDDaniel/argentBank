@@ -1,6 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { apiLogin } from "../../services/authService";
 
+/**
+ * @typedef {object} AuthState
+ * @property {string | null} token - The JWT authentication token.
+ * @property {object | null} userProfile
+ * @property {boolean} isLoggedIn
+ * @property {'idle' | 'loading' | 'succeeded' | 'failed'} status
+ * @property {string | null} error
+ */
+
+/** @type {AuthState} */
 const initialState = {
     token: null,
     user: null,
