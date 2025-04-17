@@ -140,3 +140,4 @@ export const selectIsLoggedIn = (state) => state.auth.isLoggedIn;
 export const selectAuthToken = (state) => state.auth.token;
 export const selectAuthStatus = (state) => state.auth.status;
 export const selectAuthError = (state) => state.auth.error;
+export const selectUserProfile = (state) => state.auth.userProfile;
