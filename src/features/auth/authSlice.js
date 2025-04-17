@@ -1,13 +1,27 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { apiLogin } from "../../services/authService";
+import {
+    apiLogin,
+    apiFetchUserProfile,
+    apiUpdateUserProfile,
+} from "../../services/authService";
 
-/**
+/** AuthState type definition
  * @typedef {object} AuthState
- * @property {string | null} token - The JWT authentication token.
+ * @property {string | null} token - The JWT authentication token
  * @property {object | null} userProfile
  * @property {boolean} isLoggedIn
  * @property {'idle' | 'loading' | 'succeeded' | 'failed'} status
  * @property {string | null} error
+ */
+
+/** UserProfileData type definition
+ * @typedef {object} UserProfileData
+ * @property {string} email
+ * @property {string} firstName
+ * @property {string} lastName
+ * @property {string} createdAt
+ * @property {string} updatedAt
+ * @property {string} id
  */
 
 /** @type {AuthState} */
@@ -34,6 +48,26 @@ export const loginUser = createAsyncThunk(
     }
 );
 
+export const fetchUserProfile = createAsyncThunk(
+    "auth/fetchProfile",
+    // Use '_' if first arg isn't needed
+    async (_, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState();
+            const token = state.auth.token;
+
+            if (!token) {
+                return thunkAPI.rejectWithValue("No token found");
+            }
+
+            const userProfileData = await apiFetchUserProfile(token);
+            return userProfileData;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.message);
+        }
+    }
+);
+
 const authSlice = createSlice({
     name: "auth",
     initialState,
@@ -51,6 +85,7 @@ const authSlice = createSlice({
     // Asynchronous actions
     extraReducers: (builder) => {
         builder
+            // Login
             .addCase(loginUser.pending, (state) => {
                 console.log("authSlice: loginUser.pending");
                 state.status = "loading";
@@ -77,6 +112,22 @@ const authSlice = createSlice({
                 state.error = action.payload;
                 state.isLoggedIn = false;
                 state.token = null;
+            })
+
+            // Fetch user profile
+            .addCase(fetchUserProfile.pending, (state) => {
+                state.status = "loading";
+                state.error = null;
+            })
+            .addCase(fetchUserProfile.fulfilled, (state, action) => {
+                state.status = "succeeded";
+                // action.payload is UserProfileData object
+                state.userProfile = action.payload;
+                state.error = null;
+            })
+            .addCase(fetchUserProfile.rejected, (state, action) => {
+                state.status = "failed";
+                state.error = action.payload || "Failed to fetch profile";
             });
     },
 });

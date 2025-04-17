@@ -33,14 +33,23 @@ export const apiLogin = async ({ email, password }) => {
 };
 
 /**
- * Fetches the user profile data from the API using an authentication token.
- * @param {string} token - The JWT authentication token.
- * @returns {Promise<{email: string, firstName: string, lastName: string, createdAt: string, updatedAt: string, id: string}>}
+ * @typedef {object} UserProfileApiResponse
+ * @property {string} email
+ * @property {string} firstName
+ * @property {string} lastName
+ * @property {string} createdAt
+ * @property {string} updatedAt
+ * @property {string} id
+ */
+
+/**
+ * Fetches user profile data.
+ * @param {string} token
+ * @returns {Promise<UserProfileApiResponse>}
  * @throws {Error}
  */
 export const apiFetchUserProfile = async (token) => {
-    console.log("authService: Attempting to fetch user profile..."); 
-try{
+    try {
         const response = await fetch(`${API_URL}/user/profile`, {
             method: "POST",
             headers: {
@@ -48,32 +57,32 @@ try{
                 "Content-Type": "application/json",
             },
         });
-    }
-    const data = await response.json();
-    if (!response.ok) {
-        // Handle potential errors like 401 Unauthorized (invalid token) or 500
-        const errorMessage = data?.message || `API Error: ${response.status}`;
-        console.error("authService: Failed to fetch profile:", errorMessage);
-        throw new Error(errorMessage);
-    }
-    console.log("authService: User profile fetched successfully.");
-    // Return the body containing the user profile details
-    return data.body;
 
+        if (!response.ok) {
+            const errorMessage =
+                data?.message || `API Error: ${response.status}`;
+            console.error(
+                "authService: Failed to fetch profile:",
+                errorMessage
+            );
+            throw new Error(errorMessage);
+        }
 
-}catch (error) {
-    console.error("authService: API fetch profile error:", error.message);
-    throw error;
-}
-};  
+        console.log("authService: User profile fetched successfully.");
+        const data = await response.json();
+        return data.body;
+    } catch (error) {
+        console.error("authService: API fetch profile error:", error.message);
+        throw error;
+    }
+};
 
 /**
  * Updates the user profile data (first name, last name).
- * (To be implemented later)
  * @param {string} token - The JWT authentication token.
- * @param {{firstName: string, lastName: string}} updatedData - The new first and last name.
- * @returns {Promise<object>} A promise resolving with the updated user profile data.
- * @throws {Error} If the API request fails.
+ * @param {{firstName: string, lastName: string}} updatedData
+ * @returns {Promise<object>}
+ * @throws {Error}
  */
 export const apiUpdateUserProfile = async (token, updatedData) => {
     // TODO: Implement fetch PUT /user/profile later
