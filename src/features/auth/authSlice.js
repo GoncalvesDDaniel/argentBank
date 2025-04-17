@@ -27,6 +27,7 @@ export const loginUser = createAsyncThunk(
 const authSlice = createSlice({
     name: "auth",
     initialState,
+    // Synchronous actions
     reducers: {
         logout: (state) => {
             /* ... réinitialise l'état ... */
@@ -37,6 +38,7 @@ const authSlice = createSlice({
             state.error = null;
         },
     },
+    // Asynchronous actions
     extraReducers: (builder) => {
         builder
             .addCase(loginUser.pending, (state) => {
@@ -72,7 +74,7 @@ const authSlice = createSlice({
 export const { logout } = authSlice.actions;
 export default authSlice.reducer;
 
-// Selectors (inchangés)
+// Selectors
 export const selectIsLoggedIn = (state) => state.auth.isLoggedIn;
 export const selectAuthToken = (state) => state.auth.token;
 export const selectAuthStatus = (state) => state.auth.status;

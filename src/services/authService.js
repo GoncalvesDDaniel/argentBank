@@ -10,8 +10,6 @@ export const apiLogin = async ({ email, password }) => {
             body: JSON.stringify({ email, password }),
         });
 
-        const data = await response.json();
-
         if (!response.ok) {
             // On utilise le message d'erreur de l'API si disponible, sinon un message par défaut
             const errorMessage =
@@ -20,6 +18,7 @@ export const apiLogin = async ({ email, password }) => {
             throw new Error(errorMessage);
         }
 
+        const data = await response.json();
         return data.body;
     } catch (error) {
         console.error("authService: API login error:", error.message);
