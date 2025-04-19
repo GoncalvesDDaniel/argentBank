@@ -1,16 +1,24 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import {
+    selectIsLoggedIn,
+    selectUserProfile,
+    logout,
+} from "../features/auth/authSlice";
 import argentBankLogo from "../assets/img/argentBankLogo.png";
 
 function Header() {
-    // --- Valeurs temporaires pour tester les deux états ---
+    const isLoggedIn = useSelector(selectIsLoggedIn);
+    const userProfile = useSelector(selectUserProfile);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const isLoggedIn = false;
-    const firstName = "Tony"; // Prénom d'exemple si connecté
-
-    // Fonction placeholder pour le logout (sera connectée à Redux plus tard)
+    // Fonction de déconnexion connectée à Redux
     const handleLogout = () => {
-        console.log("Déconnexion cliquée ! (Logique Redux à venir)");
+        dispatch(logout());
+        // Optionnel: Nettoyage si token stocké ailleurs (localStorage/sessionStorage)
+        navigate("/");
     };
 
     return (
@@ -24,12 +32,12 @@ function Header() {
                 <h1 className="sr-only">Argent Bank</h1>
             </Link>
             <div>
-                {isLoggedIn ? (
-                    // 2. Si l'utilisateur EST connecté :
+                {isLoggedIn && userProfile ? (
                     <>
                         <Link className="main-nav-item" to="/profile">
                             <i className="fa fa-user-circle"></i>
-                            {firstName}
+                            {/* Utilisation du prénom depuis userProfile */}
+                            {userProfile.firstName}
                         </Link>
                         <Link
                             className="main-nav-item"
@@ -41,7 +49,6 @@ function Header() {
                         </Link>
                     </>
                 ) : (
-                    // 6. Si l'utilisateur N'EST PAS connecté :
                     <Link className="main-nav-item" to="/login">
                         <i className="fa fa-user-circle"></i>
                         Sign In

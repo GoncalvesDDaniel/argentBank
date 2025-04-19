@@ -296,3 +296,30 @@ body {
         width: 200px;
     }
 }
+.edit-inputs-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    /* magic number to nivel the inputs */
+    margin-top: -0.72rem;
+}
+
+.edit-inputs-container .input-wrapper {
+    flex: 1;
+    max-width: 200px;
+    margin-bottom: 0;
+}
+
+.edit-buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.edit-buttons-container button {
+    flex: 1;
+    max-width: 120px;
+    padding: 8px;
+}

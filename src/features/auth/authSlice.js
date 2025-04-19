@@ -27,7 +27,7 @@ import {
 /** @type {AuthState} */
 const initialState = {
     token: null,
-    user: null,
+    userProfile: null,
     isLoggedIn: false,
     status: "idle",
     error: null,
@@ -76,7 +76,7 @@ const authSlice = createSlice({
         logout: (state) => {
             /* ... réinitialise l'état ... */
             state.token = null;
-            state.user = null;
+            state.userProfile = null;
             state.isLoggedIn = false;
             state.status = "idle";
             state.error = null;
