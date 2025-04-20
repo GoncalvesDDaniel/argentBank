@@ -81,11 +81,56 @@ export const apiFetchUserProfile = async (token) => {
  * Updates the user profile data (first name, last name).
  * @param {string} token - The JWT authentication token.
  * @param {{firstName: string, lastName: string}} updatedData
- * @returns {Promise<object>}
- * @throws {Error}
+ * @returns {Promise<UserProfileApiResponse>} The updated user profile data from the API.
+ * @throws {Error} If the API call fails or returns an error status.
  */
 export const apiUpdateUserProfile = async (token, updatedData) => {
-    // TODO: Implement fetch PUT /user/profile later
-    console.warn("apiUpdateUserProfile not implemented yet.");
-    throw new Error("Profile update not implemented");
+    if (!token) {
+        console.error("authService: No token provided for profile update.");
+        throw new Error("Authentication token is missing.");
+    }
+    if (!updatedData || !updatedData.firstName || !updatedData.lastName) {
+        console.error(
+            "authService: Invalid data provided for profile update:",
+            updatedData
+        );
+        throw new Error("First name and last name are required.");
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/user/profile`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                firstName: updatedData.firstName,
+                lastName: updatedData.lastName,
+            }),
+        });
+
+        const data = await response.json(); // Attempt to parse JSON regardless of status
+
+        if (!response.ok) {
+            // Use API error message if available, otherwise default HTTP status message
+            const errorMessage =
+                data?.message ||
+                `API Error: ${response.status} ${response.statusText}`;
+            console.error(
+                "authService: API profile update failed:",
+                errorMessage
+            );
+            throw new Error(errorMessage);
+        }
+
+        console.log("authService: User profile updated successfully.");
+        // Assuming the structure { status, message, body } and body contains the profile
+        return data.body;
+    } catch (error) {
+        // Handle network errors or errors thrown from the !response.ok block
+        console.error("authService: API profile update error:", error.message);
+        // Re-throw the error so it can be caught by the caller (e.g., async thunk)
+        throw error;
+    }
 };

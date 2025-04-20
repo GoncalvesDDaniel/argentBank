@@ -5,9 +5,9 @@ import {
     selectIsLoggedIn,
     selectUserProfile,
     selectAuthStatus,
-    selectAuthToken, // Sera nécessaire pour l'update
-    // updateUserProfile // Action à importer plus tard
-} from "../../features/auth/authSlice"; // Adapter le chemin si nécessaire
+    selectAuthToken,
+    updateUserProfile,
+} from "../../features/auth/authSlice";
 
 function UserProfilePage() {
     const dispatch = useDispatch();
@@ -31,7 +31,7 @@ function UserProfilePage() {
             setFirstName(userProfile.firstName);
             setLastName(userProfile.lastName);
         }
-    }, [dispatch, isLoggedIn, userProfile, status]); // 'isEditing' n'est pas utile ici
+    }, [dispatch, isLoggedIn, userProfile, status]);
 
     // Gestion simple du chargement / erreur / absence de profil
     if (!userProfile) {
@@ -70,25 +70,18 @@ function UserProfilePage() {
         setLastName(userProfile.lastName);
     };
 
-    const handleSaveClick = (event) => {
+    const handleSaveClick = async (event) => {
         event.preventDefault();
-        // TODO: Dispatch l'action d'update ici
         console.log("Dispatching update with:", { firstName, lastName });
-        // Exemple d'appel (à décommenter quand l'action sera prête)
-        // if (token) {
-        //     dispatch(updateUserProfile({ token, userData: { firstName, lastName } }))
-        //         .unwrap() // Permet de catcher les erreurs ou succès du thunk
-        //         .then(() => {
-        //             setIsEditing(false); // Fermer le formulaire si succès
-        //         })
-        //         .catch((error) => {
-        //             console.error("Failed to update profile:", error);
-        //             // Afficher un message d'erreur à l'utilisateur ici
-        //         });
-        // } else {
-        //     console.error("No token found for updating profile");
-        // }
-        setIsEditing(false); // Temporaire: ferme le formulaire immédiatement
+        try {
+            const updatedProfile = await dispatch(
+                updateUserProfile({ firstName, lastName }).unwrap()
+            );
+            console.log("Update successful:", updatedProfile);
+            setIsEditing(false);
+        } catch (error) {
+            console.error("Update failed:", error);
+        }
     };
 
     return (

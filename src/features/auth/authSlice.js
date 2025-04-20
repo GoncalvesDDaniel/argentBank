@@ -63,7 +63,31 @@ export const fetchUserProfile = createAsyncThunk(
             const userProfileData = await apiFetchUserProfile(token);
             return userProfileData;
         } catch (error) {
-            return thunkAPI.rejectWithValue(error.message);
+            const message = error.message || "Failed to fetch profile";
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
+
+export const updateUserProfile = createAsyncThunk(
+    "auth/updateProfile",
+    async ({ firstName, lastName }, thunkAPI) => {
+        try {
+            const state = thunkAPI.getState();
+            const token = state.auth.token;
+
+            if (!token) {
+                return thunkAPI.rejectWithValue("No token found");
+            }
+
+            const updatedProfileData = await apiUpdateUserProfile(token, {
+                firstName,
+                lastName,
+            });
+            return updatedProfileData;
+        } catch (error) {
+            const message = error.message || "Failed to update profile";
+            return thunkAPI.rejectWithValue(message);
         }
     }
 );
@@ -85,7 +109,9 @@ const authSlice = createSlice({
     // Asynchronous actions
     extraReducers: (builder) => {
         builder
+
             // Login
+
             .addCase(loginUser.pending, (state) => {
                 console.log("authSlice: loginUser.pending");
                 state.status = "loading";
@@ -100,9 +126,7 @@ const authSlice = createSlice({
                 state.token = action.payload.token;
                 state.isLoggedIn = true;
                 state.error = null;
-                // La récupération du profil utilisateur viendra APRÈS ça
             })
-
             .addCase(loginUser.rejected, (state, action) => {
                 console.log(
                     "authSlice: loginUser.rejected, error:",
@@ -115,19 +139,36 @@ const authSlice = createSlice({
             })
 
             // Fetch user profile
+
             .addCase(fetchUserProfile.pending, (state) => {
                 state.status = "loading";
                 state.error = null;
             })
             .addCase(fetchUserProfile.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                // action.payload is UserProfileData object
                 state.userProfile = action.payload;
                 state.error = null;
             })
             .addCase(fetchUserProfile.rejected, (state, action) => {
                 state.status = "failed";
-                state.error = action.payload || "Failed to fetch profile";
+                state.error = action.payload || "failed to fetch profile";
+            })
+
+            // Update User Profile Reducers
+
+            .addCase(updateUserProfile.pending, (state) => {
+                state.status = "loading";
+                state.error = null;
+            })
+            .addCase(updateUserProfile.fulfilled, (state, action) => {
+                state.status = "succeeded";
+                // action.payload contient les données mises à jour retournées par l'API
+                state.userProfile = action.payload;
+                state.error = null;
+            })
+            .addCase(updateUserProfile.rejected, (state, action) => {
+                state.status = "failed";
+                state.error = action.payload || "Failed to update profile";
             });
     },
 });
