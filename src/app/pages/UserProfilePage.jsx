@@ -75,8 +75,8 @@ function UserProfilePage() {
         console.log("Dispatching update with:", { firstName, lastName });
         try {
             const updatedProfile = await dispatch(
-                updateUserProfile({ firstName, lastName }).unwrap()
-            );
+                updateUserProfile({ firstName, lastName })
+            ).unwrap();
             console.log("Update successful:", updatedProfile);
             setIsEditing(false);
         } catch (error) {
