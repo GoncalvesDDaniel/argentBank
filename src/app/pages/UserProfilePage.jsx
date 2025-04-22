@@ -87,7 +87,6 @@ function UserProfilePage() {
     return (
         <main className="main bg-dark">
             <div className="header">
-                {/* Le titre change légèrement en mode édition pour correspondre à la maquette */}
                 {!isEditing ? (
                     <h1>
                         Welcome back
@@ -95,7 +94,7 @@ function UserProfilePage() {
                         {`${userProfile.firstName} ${userProfile.lastName}`}!
                     </h1>
                 ) : (
-                    <h1>Welcome back</h1> // Titre simple en mode édition
+                    <h1>Welcome back</h1>
                 )}
 
                 {/* Affichage conditionnel: Bouton 'Edit Name' OU Formulaire */}
@@ -152,10 +151,8 @@ function UserProfilePage() {
                 )}
             </div>
 
-            {/* --- Accounts Section --- */}
             <h2 className="sr-only">Accounts</h2>
             <section className="account">
-                {/* ... contenu compte x8349 ... */}
                 <div className="account-content-wrapper">
                     <h3 className="account-title">
                         Argent Bank Checking (x8349)
@@ -172,7 +169,6 @@ function UserProfilePage() {
                 </div>
             </section>
             <section className="account">
-                {/* ... contenu compte x6712 ... */}
                 <div className="account-content-wrapper">
                     <h3 className="account-title">
                         Argent Bank Savings (x6712)
@@ -189,7 +185,6 @@ function UserProfilePage() {
                 </div>
             </section>
             <section className="account">
-                {/* ... contenu compte x8349 (crédit) ... */}
                 <div className="account-content-wrapper">
                     <h3 className="account-title">
                         Argent Bank Credit Card (x8349)

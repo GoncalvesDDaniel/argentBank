@@ -1,12 +1,45 @@
-# React + Vite
+# Argent Bank Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ce projet est le frontend de l'application Argent Bank, développé dans le cadre du Parcours Développeur Web d'OpenClassrooms (Projet 13). Il est construit avec React, Redux Toolkit et interagit avec une API backend fournie.
 
-Currently, two official plugins are available:
+## Contexte
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+L'application permet aux utilisateurs de se connecter, de visualiser et de modifier les informations de leur profil, ainsi que de se déconnecter. La Phase 2 du projet consistait à concevoir les endpoints API pour les transactions futures en utilisant Swagger/OpenAPI.
 
-## Expanding the ESLint configuration
+## Prérequis
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+-   Node.js (v16 ou supérieur recommandé)
+-   npm ou yarn ou pnpm
+-   L'API backend d'Argent Bank doit être lancée et accessible.
+
+## Installation
+
+1.  Clonez le dépôt :
+    ```bash
+    git clone <votre-url-repo>
+    cd argent-bank-frontend
+    ```
+2.  Installez les dépendances :
+    ```bash
+    npm install
+    # ou yarn install ou pnpm install
+    ```
+
+## Back end
+
+-   L'API backend est disponible [ici](https://github.com/OpenClassrooms-Student-Center/Project-10-Bank-API/blob/master/README.md)
+-   Adresse par défaut : `http://localhost:3001`
+
+## Lancement en Mode Développement
+
+-   Pour lancer le serveur de développement :
+
+```bash
+npm run dev
+```
+
+-   Pour lancer le serveur back end :
+
+```bash
+npm run dev:serv
+```
