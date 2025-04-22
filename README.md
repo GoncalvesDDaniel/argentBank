@@ -16,13 +16,12 @@ L'application permet aux utilisateurs de se connecter, de visualiser et de modif
 
 1.  Clonez le dépôt :
     ```bash
-    git clone <votre-url-repo>
+    git clone https://github.com/GoncalvesDDaniel/argentBank
     cd argent-bank-frontend
     ```
 2.  Installez les dépendances :
     ```bash
     npm install
-    # ou yarn install ou pnpm install
     ```
 
 ## Back end
