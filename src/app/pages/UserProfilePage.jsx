@@ -5,7 +5,6 @@ import {
     selectIsLoggedIn,
     selectUserProfile,
     selectAuthStatus,
-    selectAuthToken,
     updateUserProfile,
 } from "../../features/auth/authSlice";
 
@@ -14,26 +13,25 @@ function UserProfilePage() {
     const isLoggedIn = useSelector(selectIsLoggedIn);
     const userProfile = useSelector(selectUserProfile);
     const status = useSelector(selectAuthStatus);
-    const token = useSelector(selectAuthToken); // Récupérer le token pour l'API
 
     const [isEditing, setIsEditing] = useState(false);
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
 
     useEffect(() => {
-        // Fetch profile initial si nécessaire
+        // Fetch profile if needed
         if (isLoggedIn && !userProfile && status !== "loading") {
             dispatch(fetchUserProfile());
         }
-        // Initialise les champs si le profil est chargé (au cas où le composant re-render)
-        // Mais le remplissage principal se fait dans handleEditClick
+
+        // If the user is logged in and the profile is available, set the local state from the store
         if (userProfile) {
             setFirstName(userProfile.firstName);
             setLastName(userProfile.lastName);
         }
     }, [dispatch, isLoggedIn, userProfile, status]);
 
-    // Gestion simple du chargement / erreur / absence de profil
+    // Display loading state or error message if userProfile is not available
     if (!userProfile) {
         if (status === "loading") {
             return (
@@ -44,8 +42,6 @@ function UserProfilePage() {
                 </main>
             );
         }
-        // Pour les autres cas (erreur ou juste pas encore chargé), on affiche un message générique ou rien
-        // car userProfile est nécessaire pour la suite.
         return (
             <main className="main bg-dark">
                 <div className="header">
@@ -55,29 +51,28 @@ function UserProfilePage() {
         );
     }
 
+    // For input fields, we use local state to manage the values
     const handleEditClick = () => {
-        // Assure que les champs sont bien remplis avec les dernières données du store
         setFirstName(userProfile.firstName);
         setLastName(userProfile.lastName);
         setIsEditing(true);
     };
 
+    // Reset local state to the original values.
     const handleCancelClick = () => {
         setIsEditing(false);
-        // Réinitialiser les champs locaux aux valeurs du store peut être une bonne pratique
-        // au cas où le store aurait changé pendant l'édition (improbable mais sûr)
         setFirstName(userProfile.firstName);
         setLastName(userProfile.lastName);
     };
 
+    // Save the updated profile to the store.
+    // We use a common pattern in Redux Toolkit (unwrap) to handle async actions.
     const handleSaveClick = async (event) => {
         event.preventDefault();
-        console.log("Dispatching update with:", { firstName, lastName });
         try {
             const updatedProfile = await dispatch(
                 updateUserProfile({ firstName, lastName })
             ).unwrap();
-            console.log("Update successful:", updatedProfile);
             setIsEditing(false);
         } catch (error) {
             console.error("Update failed:", error);
@@ -97,7 +92,7 @@ function UserProfilePage() {
                     <h1>Welcome back</h1>
                 )}
 
-                {/* Affichage conditionnel: Bouton 'Edit Name' OU Formulaire */}
+                {/*Conditionnal wrapper for editing form*/}
                 {!isEditing ? (
                     <button className="edit-button" onClick={handleEditClick}>
                         Edit Name
@@ -105,7 +100,6 @@ function UserProfilePage() {
                 ) : (
                     <form className="edit-form" onSubmit={handleSaveClick}>
                         <div className="edit-inputs-container">
-                            {/* Utilisation de input-wrapper pour le style de base */}
                             <div className="input-wrapper">
                                 <label htmlFor="firstName" className="sr-only">
                                     First name
