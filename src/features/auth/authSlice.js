@@ -5,16 +5,20 @@ import {
     apiUpdateUserProfile,
 } from "../../services/authService";
 
-/** AuthState type definition
+// Types definitions for JsDoc
+
+/**
+ * AuthState represents the authentication state in the Redux store.
  * @typedef {object} AuthState
  * @property {string | null} token - The JWT authentication token
- * @property {object | null} userProfile
- * @property {boolean} isLoggedIn
- * @property {'idle' | 'loading' | 'succeeded' | 'failed'} status
- * @property {string | null} error
+ * @property {object | null} userProfile - The user profile after fetching from the API
+ * @property {boolean} isLoggedIn - Indicates if the user is authenticated
+ * @property {'idle' | 'loading' | 'succeeded' | 'failed'} status - Async status
+ * @property {string | null} error - Error message if any
  */
 
-/** UserProfileData type definition
+/**
+ * Represents the user profile data received from the API.
  * @typedef {object} UserProfileData
  * @property {string} email
  * @property {string} firstName
@@ -33,6 +37,7 @@ const initialState = {
     error: null,
 };
 
+/** Initiates the user login process. */
 export const loginUser = createAsyncThunk(
     "auth/login",
     async ({ email, password }, thunkAPI) => {
@@ -40,14 +45,13 @@ export const loginUser = createAsyncThunk(
             const data = await apiLogin({ email, password });
             return data;
         } catch (error) {
-            console.error("Erreur de connexion:", error.message);
-            return thunkAPI.rejectWithValue(
-                error.message || "Erreur de connexion"
-            );
+            const message = error.message || "Failed to login";
+            return thunkAPI.rejectWithValue(message);
         }
     }
 );
 
+/** Fetches the profile data with the user token. */
 export const fetchUserProfile = createAsyncThunk(
     "auth/fetchProfile",
     // Use '_' if first arg isn't needed
@@ -69,6 +73,7 @@ export const fetchUserProfile = createAsyncThunk(
     }
 );
 
+/** Updates the user's first and last name. */
 export const updateUserProfile = createAsyncThunk(
     "auth/updateProfile",
     async ({ firstName, lastName }, thunkAPI) => {
@@ -95,10 +100,8 @@ export const updateUserProfile = createAsyncThunk(
 const authSlice = createSlice({
     name: "auth",
     initialState,
-    // Synchronous actions
     reducers: {
         logout: (state) => {
-            /* ... réinitialise l'état ... */
             state.token = null;
             state.userProfile = null;
             state.isLoggedIn = false;
@@ -106,39 +109,27 @@ const authSlice = createSlice({
             state.error = null;
         },
     },
-    // Asynchronous actions
     extraReducers: (builder) => {
         builder
-
-            // Login
-
             .addCase(loginUser.pending, (state) => {
-                console.log("authSlice: loginUser.pending");
                 state.status = "loading";
                 state.error = null;
             })
             .addCase(loginUser.fulfilled, (state, action) => {
-                console.log(
-                    "authSlice: loginUser.fulfilled, payload:",
-                    action.payload
-                );
                 state.status = "succeeded";
                 state.token = action.payload.token;
                 state.isLoggedIn = true;
                 state.error = null;
+                // On successful login, fetch the user profile
+                // to populate the userProfile state
             })
             .addCase(loginUser.rejected, (state, action) => {
-                console.log(
-                    "authSlice: loginUser.rejected, error:",
-                    action.payload
-                );
                 state.status = "failed";
                 state.error = action.payload;
                 state.isLoggedIn = false;
                 state.token = null;
+                state.userProfile = null;
             })
-
-            // Fetch user profile
 
             .addCase(fetchUserProfile.pending, (state) => {
                 state.status = "loading";
@@ -151,10 +142,8 @@ const authSlice = createSlice({
             })
             .addCase(fetchUserProfile.rejected, (state, action) => {
                 state.status = "failed";
-                state.error = action.payload || "failed to fetch profile";
+                state.error = action.payload;
             })
-
-            // Update User Profile Reducers
 
             .addCase(updateUserProfile.pending, (state) => {
                 state.status = "loading";
@@ -162,8 +151,7 @@ const authSlice = createSlice({
             })
             .addCase(updateUserProfile.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                // action.payload contient les données mises à jour retournées par l'API
-                state.userProfile = action.payload;
+                state.userProfile = action.payload; // Update the user profile with the new data
                 state.error = null;
             })
             .addCase(updateUserProfile.rejected, (state, action) => {

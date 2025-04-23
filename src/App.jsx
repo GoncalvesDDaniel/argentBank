@@ -36,7 +36,6 @@ function App() {
                             )
                         }
                     />
-                    {/* route 404 ? */}
                 </Routes>
                 <Footer />
             </Router>
