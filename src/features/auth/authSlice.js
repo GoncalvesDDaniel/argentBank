@@ -6,9 +6,8 @@ import {
 } from "../../services/authService";
 
 // Types definitions for JsDoc
-
-/**
- * AuthState represents the authentication state in the Redux store.
+/** AuthState type
+ * represents the authentication state in the Redux store.
  * @typedef {object} AuthState
  * @property {string | null} token - The JWT authentication token
  * @property {object | null} userProfile - The user profile after fetching from the API
@@ -17,8 +16,8 @@ import {
  * @property {string | null} error - Error message if any
  */
 
-/**
- * Represents the user profile data received from the API.
+/** UserProfile type
+ * represents the user profile data received from the API.
  * @typedef {object} UserProfileData
  * @property {string} email
  * @property {string} firstName
